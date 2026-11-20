@@ -210,7 +210,17 @@ Explicit "Check for new mail" only -> read-only Gmail IMAP (user's own saved app
 Fetched messages -> encrypted mail_message records -> local extraction -> candidate reminders -> explicit accept/discard
 ```
 
+![Request flow: Mac app or browser through permission checks, the workflow controller, encrypted retrieval, and local Ollama, with research and mail import as separate explicitly-triggered branches.](docs/architecture-diagram.png)
+
 `lumen/app.py` coordinates tools, permissions, sessions, approval lifetimes, and workflows. `storage.py` owns encryption, `documents.py` owns extraction/chunking/retrieval, `inference.py` owns loopback model access, `research.py` owns the app's optional external search call, `mail.py` owns the optional read-only IMAP fetch and candidate-reminder extraction/validation, and `static/` contains the interface. `native/Lumen.swift` owns the menu bar, shortcut, explicit clipboard/file sharing, nonpersistent WKWebView, and opt-in login setting. `desktop_server.py` owns the native app's backend lifecycle. The native web view restricts navigation/bridge calls to its own loopback service; explicitly clicked source links open in the default browser. Separately, `langsmith_export.py` supports previewed synthetic evaluation exports without instrumenting the app. No Node build step or framework is needed.
+
+![Component and process ownership: the native Mac app and desktop_server.py, or a loopback browser, both reach lumen/app.py's controller, which coordinates storage.py, documents.py, inference.py, research.py, mail.py, and the static UI. Only inference.py, research.py, and mail.py ever reach the network, each under a different explicit restriction.](docs/component-diagram.png)
+
+Every record's path between private, authorized, and deleted goes through an explicit action — there is no path that grants AI access, or removes a record, without one:
+
+![Permission lifecycle: a locked vault unlocks with a passphrase, a newly created or imported record stays private until explicitly authorized, an explicit revoke excludes it again immediately (even mid-request), locking clears approvals and discards in-flight work, and deletion always requires a single-use, revision-bound approval.](docs/permission-lifecycle-diagram.png)
+
+All three diagrams are generated directly from the architecture described above — not hand-drawn — by [scripts/render_architecture_diagram.py](scripts/render_architecture_diagram.py); regenerate them with `.venv/bin/python scripts/render_architecture_diagram.py` if the architecture changes.
 
 ### Retrieval checkpoint demonstration
 
