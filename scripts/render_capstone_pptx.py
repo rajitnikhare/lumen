@@ -153,7 +153,7 @@ SLIDES = [
         "kicker": "6. Repository and implementation",
         "title": "What's in the repository",
         "bullets": [
-            "Public repository URL: to be added and verified before final submission.",
+            "Public repository URL: github.com/rajitnikhare/lumen \u2014 created and reachable; not yet populated as of this revision, with the push still pending.",
             "README covering the project, architecture, setup, and day-to-day usage; full application and native source; the complete test suite, including the mail-import fakes.",
             "Synthetic evaluation dataset and human-scoring rubric; design documents (architecture, safety/intervention plan, UI experience plan) distinguishing implemented from proposed work.",
             "Reproduce locally: install dependencies, start Ollama with a local model, run `lumen`. No personal vault is required for the automated tests.",

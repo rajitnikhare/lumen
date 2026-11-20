@@ -174,7 +174,7 @@ The overall contribution is a working local-first assistant with inspectable per
 
 ## 10. Public GitHub repository
 
-**Public repository URL: To be added after publication and verification.** No public project URL was supplied or verified for this draft. Creating this report does not publish the source or any local files.
+**Public repository URL: https://github.com/rajitnikhare/lumen** — created and reachable, but not yet populated as of this revision; the local commit is prepared and the push is pending. Creating this report does not publish the source or any local files.
 
 Before final submission, publish a curated repository containing the README, application/native source, setup and test instructions, dependency configuration, synthetic examples, relevant design decisions, and shareable evaluation artifacts. Distinguish implemented features from planned work so an external reviewer can reproduce the demonstrated behavior.
 
