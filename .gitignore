@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.DS_Store
+.maple/
+.lumen/
+client_secret*.json
+credentials*.json
+.env
+evaluation-results/
+~$*

@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Lumen - Your private assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/chat.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <section id="vault-screen" class="vault-screen">
+    <div class="vault-card">
+      <div class="brand-mark">L</div>
+      <p class="eyebrow">A LITTLE MORE CLARITY. A LOT MORE PRIVACY.</p>
+      <h1>Your day, in a<br>different light.</h1>
+      <p class="muted">Meet Lumen. A personal assistant that thinks on your computer and keeps your information there.</p>
+      <form id="unlock-form">
+        <label for="passphrase" id="passphrase-label">Vault passphrase</label>
+        <input id="passphrase" type="password" autocomplete="current-password" required maxlength="1024">
+        <button type="submit" class="primary full" id="unlock-button">Unlock my workspace</button>
+      </form>
+      <p id="vault-hint" class="small muted"></p>
+      <div class="privacy-line"><span class="status-dot"></span>Local AI. Encrypted storage. You're in control.</div>
+    </div>
+  </section>
+
+  <div id="workspace" class="workspace" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/"> <span class="brand-mark small-mark">L</span>lumen<span class="brand-period">.</span></a>
+      <p class="sidebar-label">YOUR WORKSPACE</p>
+      <nav aria-label="Workspace">
+        <button data-page="overview" class="nav-button active"><span class="nav-icon">&#9728;</span> My day</button>
+        <button data-page="assistant" class="nav-button"><span class="nav-icon">&#10022;</span> Assistant</button>
+        <button data-page="saved" class="nav-button"><span class="nav-icon">&#9636;</span> Saved</button>
+        <button data-page="reminders" class="nav-button"><span class="nav-icon">&#9719;</span> Reminders</button>
+        <button data-page="research" class="nav-button"><span class="nav-icon">&#9678;</span> Research</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="local-badge"><span class="status-dot"></span>Private by design<p>AI stays on this device</p></div>
+        <button data-page="settings" class="nav-button"><span class="nav-icon">&#9881;</span> Settings & privacy</button>
+        <button id="lock-button" class="nav-button"><span class="nav-icon">&#9633;</span> Lock workspace</button>
+      </div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <div class="breadcrumb">My workspace <span>/</span> <strong id="page-label">My day</strong></div>
+        <div class="compact-controls">
+          <select id="compact-page" aria-label="Workspace view"><option value="assistant">Lumen chat</option><option value="overview">My day</option><option value="saved">Saved</option><option value="reminders">Reminders</option><option value="research">Research</option><option value="settings">Settings</option></select>
+          <button id="compact-lock" class="secondary" type="button">Lock</button>
+        </div>
+        <div class="topbar-right"><span class="local-pill"><span class="status-dot"></span>ON DEVICE</span><span class="avatar">ME</span></div>
+      </header>
+      <div class="main-content">
+        <section id="page-overview" class="page">
+          <div class="page-heading"><div><p class="eyebrow" id="today-label"></p><h1 id="greeting">A little space to think.</h1><p class="muted">Less scattered information. More room for what matters.</p></div><button class="primary" data-page="assistant">Ask Lumen <span>&#8599;</span></button></div>
+          <div class="welcome-banner">
+            <div><span class="mini-label">YOUR PERSONAL AI, WITHOUT THE OVERSHARING</span><h2>Everything you need.<br>Nothing you don't authorize.</h2><p>Make sense of documents, capture a thought, or get a first draft.<br>Lumen helps you move forward, with you in control.</p><button class="light-button" data-page="saved" data-saved-tab="documents">Add your first document &#8594;</button></div>
+            <div class="banner-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="sun-core">&#10022;</div><span class="art-note">a clearer day</span></div>
+          </div>
+          <div id="stats" class="stats-grid"></div>
+          <div class="section-heading"><h2>What would you like to do?</h2><span class="small muted">Small steps, less friction</span></div>
+          <div class="quick-grid">
+            <button class="quick-card" data-page="saved" data-saved-tab="documents"><span class="quick-icon peach">&#9636;</span><h3>Understand a document</h3><p>Find the important parts in a PDF or Word file.</p><span class="card-arrow">&#8599;</span></button>
+            <button class="quick-card" data-page="saved" data-saved-tab="notes"><span class="quick-icon sage">&#9998;</span><h3>Save a thought</h3><p>A note today. Useful context when you need it.</p><span class="card-arrow">&#8599;</span></button>
+            <button class="quick-card" data-page="saved" data-saved-tab="drafts"><span class="quick-icon lavender">&#9993;</span><h3>Find the right words</h3><p>Start an email draft. Make it sound like you.</p><span class="card-arrow">&#8599;</span></button>
+          </div>
+          <div class="overview-grid">
+            <section class="panel"><div class="section-heading"><h2>On your horizon</h2><button class="text-button" data-page="reminders">All reminders &#8594;</button></div><div id="upcoming"></div></section>
+            <section class="panel"><div class="section-heading"><h2>Recently saved</h2><button class="text-button" data-page="saved" data-saved-tab="notes">Your notes &#8594;</button></div><div id="recent"></div></section>
+          </div>
+          <p class="footer-note"><span class="status-dot"></span>Your workspace is encrypted. Nothing leaves this device without an approved external search.</p>
+        </section>
+
+        <section id="page-assistant" class="page" hidden>
+          <div class="page-heading"><div><h1>What can I help with?</h1><p class="muted">Ask a question, save a thought, or share something for a useful next step.</p></div></div>
+          <div id="model-setup" class="notice" hidden><span id="model-setup-text"></span><button id="setup-model" class="secondary" type="button">Set up local AI</button><button id="open-ollama" class="secondary" type="button" hidden>Open Ollama</button></div>
+          <div id="chat-log" class="chat-log" aria-live="polite"></div>
+          <form id="chat-form" class="panel chat-form">
+            <div class="chat-tools" role="group" aria-label="What should Lumen do?">
+              <button type="button" data-chat-mode="ask" class="tool-chip selected">Ask / suggest</button>
+              <button type="button" data-chat-mode="note" class="tool-chip">Save a note</button>
+              <button type="button" data-chat-mode="reminder" class="tool-chip">Remind me</button>
+              <button type="button" data-chat-mode="draft" class="tool-chip">Draft an email</button>
+            </div>
+            <label for="chat-message" id="chat-message-label">What is on your mind?</label>
+            <textarea id="chat-message" placeholder="Help me organize this in Notes, or suggest my next step..." required maxlength="8000" rows="3"></textarea>
+            <div id="inline-reminder" hidden><label for="inline-due">When should I remind you? (local time)</label><input id="inline-due" type="datetime-local"></div>
+            <div id="inline-note" hidden><label class="check-label"><input id="inline-note-memory" type="checkbox"> Allow Lumen to use this note as memory</label></div>
+            <div id="inline-draft" hidden><label for="inline-recipient">Who is the email for? (optional)</label><input id="inline-recipient" maxlength="320" placeholder="Name or email address"></div>
+            <details id="shared-context" hidden>
+              <summary>Shared context is attached - review or clear</summary>
+              <label for="shared-text">Text you chose to share</label><textarea id="shared-text" maxlength="8000" rows="3" placeholder="Paste selected text here. Nothing is sent until you ask."></textarea>
+              <label for="shared-app">Which Mac app? (optional)</label><input id="shared-app" maxlength="150" placeholder="For example: Notes, Mail, Pages, Numbers">
+              <div id="shared-file-preview" hidden><p id="shared-file-name" class="small"></p><label class="check-label" id="file-consent-label"><input id="shared-file-consent" type="checkbox"> Allow local AI access and save an encrypted library copy of this file</label><button id="remove-shared-file" type="button" class="text-button">Remove file</button></div>
+              <button id="clear-shared-context" type="button" class="text-button">Clear shared context</button>
+            </details>
+            <input id="chat-file" type="file" accept=".pdf,.docx,.txt,.md" hidden>
+            <div class="share-controls"><button id="voice-button" class="text-button" type="button" title="Hold . and press Enter while Lumen is focused to start or stop speaking" hidden>Speak to Lumen (. + Enter)</button><button id="share-text" class="text-button" type="button">+ Share text</button><button id="share-clipboard" class="text-button" type="button">+ Clipboard text</button><button id="share-file" class="text-button" type="button">+ Attach file</button></div>
+            <p class="small muted chat-disclosure">Only text/files you share and authorized memory are used. No screen reading or app control. File Q&A uses excerpts; use Documents for a full summary.</p>
+            <div class="form-bottom"><label class="check-label"><input id="use-history" type="checkbox"> Include recent chat</label><button type="submit" class="primary" id="chat-submit">Ask Lumen &#8599;</button></div>
+            <p id="chat-tool-feedback" class="small" role="status" hidden></p>
+            <p id="chat-progress" class="loading-mark" role="status" hidden>Thinking locally...</p>
+          </form>
+        </section>
+
+        <section id="page-saved" class="page" hidden>
+          <div class="page-heading"><div><p class="eyebrow">YOUR SAVED WORK</p><h1>Everything you've kept.</h1><p class="muted">Documents, notes, and drafts in one place. AI access stays off unless you allow it.</p></div></div>
+          <div class="saved-tabs" role="tablist" aria-label="Saved content">
+            <button type="button" class="tool-chip selected" data-saved-tab="documents" role="tab" aria-selected="true">Documents</button>
+            <button type="button" class="tool-chip" data-saved-tab="notes" role="tab" aria-selected="false">Notes & memory</button>
+            <button type="button" class="tool-chip" data-saved-tab="drafts" role="tab" aria-selected="false">Email drafts</button>
+            <button type="button" class="tool-chip" data-saved-tab="mail" role="tab" aria-selected="false">Mail</button>
+          </div>
+
+          <section id="saved-documents" class="saved-panel">
+            <div class="panel-toolbar"><input id="document-search" type="search" placeholder="Search documents..." aria-label="Search documents"><button id="toggle-upload-form" class="secondary" type="button">+ Add document</button></div>
+            <form id="upload-form" class="panel" hidden>
+              <label for="document-file">Add a document</label><input id="document-file" type="file" accept=".pdf,.docx,.txt,.md" required>
+              <p class="small muted">PDF, Word (.docx), TXT, or Markdown. Up to 12 MiB. Scanned PDFs need OCR; old .doc files must be converted.</p>
+              <div class="form-bottom"><label class="check-label"><input id="document-authorized" type="checkbox"> Allow local AI to summarize and retrieve this file</label><div class="form-bottom-actions"><button type="button" class="secondary" id="cancel-upload">Cancel</button><button type="submit" class="primary">Import document</button></div></div>
+            </form>
+            <div id="document-list" class="record-list"></div>
+          </section>
+
+          <section id="saved-notes" class="saved-panel" hidden>
+            <div class="panel-toolbar"><input id="note-search" type="search" placeholder="Search notes..." aria-label="Search notes"><button id="new-note" class="secondary" type="button">+ New note</button></div>
+            <form id="note-form" class="panel" hidden>
+              <input id="note-id" type="hidden">
+              <label for="note-title">Title</label><input id="note-title" required maxlength="200" placeholder="A thought, a plan, a preference...">
+              <label for="note-body">Your note</label><textarea id="note-body" required maxlength="30000" rows="5"></textarea>
+              <label for="note-category">Type</label><select id="note-category"><option value="note">Personal note</option><option value="preference">Preference or correction for Lumen</option></select>
+              <div class="form-bottom"><label class="check-label"><input id="note-authorized" type="checkbox"> Allow local AI to use this as memory</label><div class="form-bottom-actions"><button type="button" class="secondary" id="cancel-note">Cancel</button><button class="primary" type="submit">Save note</button></div></div>
+            </form>
+            <div id="note-list" class="record-list"></div>
+          </section>
+
+          <section id="saved-drafts" class="saved-panel" hidden>
+            <div class="panel-toolbar"><input id="draft-search" type="search" placeholder="Search drafts..." aria-label="Search drafts"><button id="new-draft" class="secondary" type="button">+ New draft</button></div>
+            <div id="draft-editor" class="two-columns" hidden>
+              <form id="compose-form" class="panel">
+                <h2>A starting point</h2><label for="compose-recipient">Recipient (optional)</label><input id="compose-recipient" maxlength="320" placeholder="Who is this for?">
+                <label for="compose-instructions">What would you like to say?</label><textarea id="compose-instructions" required rows="5" maxlength="8000" placeholder="Purpose, key details, and anything to avoid..."></textarea>
+                <label for="compose-tone">Tone</label><select id="compose-tone"><option>warm and professional</option><option>concise and direct</option><option>friendly and informal</option><option>formal and respectful</option></select>
+                <button type="submit" class="primary">Create a local draft &#10022;</button>
+              </form>
+              <form id="draft-form" class="panel">
+                <h2>Your editable draft</h2><input id="draft-id" type="hidden"><label for="draft-recipient">To</label><input id="draft-recipient" maxlength="320">
+                <label for="draft-subject">Subject</label><input id="draft-subject" maxlength="500">
+                <label for="draft-body">Email body</label><textarea id="draft-body" required rows="8" maxlength="30000"></textarea>
+                <div class="form-bottom"><span class="small muted">Saved here. Never sent.</span><div class="form-bottom-actions"><button type="button" class="secondary" id="cancel-draft">Close</button><button class="primary" type="submit">Save draft</button></div></div>
+              </form>
+            </div>
+            <div id="draft-list" class="record-list"></div>
+          </section>
+
+          <section id="saved-mail" class="saved-panel" hidden>
+            <div class="panel-toolbar"><input id="mail-search" type="search" placeholder="Search imported mail..." aria-label="Search imported mail"><button id="check-mail" class="secondary" type="button">Check for new mail</button></div>
+            <p class="small muted">Read-only. Lumen never sends mail. Imports your Gmail inbox from the last 90 days, bounded to 200 messages per check, and never marks messages as read.</p>
+            <p id="mail-check-status" class="small" role="status"></p>
+            <div id="mail-message-list" class="record-list"></div>
+          </section>
+        </section>
+
+        <section id="page-reminders" class="page" hidden>
+          <div class="page-heading"><div><p class="eyebrow">A GENTLE NUDGE</p><h1>Keep the important things in sight.</h1><p class="muted">Local reminders, shown while Lumen is open and unlocked. No background or OS notifications.</p></div><button id="new-reminder" class="primary">+ New reminder</button></div>
+          <section id="candidate-reminders" class="panel" hidden>
+            <h2>Suggested from your email</h2>
+            <p class="small muted">Lumen found these dates in imported mail. Nothing becomes a real reminder until you accept it.</p>
+            <div id="candidate-reminder-list" class="record-list"></div>
+          </section>
+          <div class="panel-toolbar"><input id="reminder-search" type="search" placeholder="Search reminders..." aria-label="Search reminders"></div>
+          <form id="reminder-form" class="panel" hidden>
+            <input id="reminder-id" type="hidden"><input id="candidate-accept-id" type="hidden"><label for="reminder-title">What do you want to remember?</label><input id="reminder-title" required maxlength="200">
+            <div class="two-columns"><div><label for="reminder-due">When (your laptop's timezone)</label><input id="reminder-due" type="datetime-local" required></div><div><label for="reminder-details">Details (optional)</label><input id="reminder-details" maxlength="4000"></div></div>
+            <div class="form-bottom"><label class="check-label"><input id="reminder-done" type="checkbox"> Already completed</label><div class="form-bottom-actions"><button type="button" class="secondary" id="cancel-reminder">Cancel</button><button type="submit" class="primary">Save reminder</button></div></div>
+          </form>
+          <div id="reminder-list" class="record-list"></div>
+        </section>
+
+        <section id="page-research" class="page" hidden>
+          <div class="page-heading"><div><p class="eyebrow">LOOK OUTSIDE, WITH INTENTION</p><h1>Research without oversharing.</h1><p class="muted">You write the public query. You approve it. Lumen compares the returned snippets locally.</p></div></div>
+          <div class="notice">Brave receives the exact approved query, your API credential, and network metadata. Never include sensitive personal details. Source pages are not fetched automatically; opening a source link contacts that website.</div>
+          <form id="research-form" class="panel"><label for="research-query">Public search query</label><input id="research-query" required minlength="3" maxlength="500" placeholder="For example: evidence-based ways to improve sleep quality"><p class="small muted">No document text, notes, or conversation history are attached. Every new query needs a fresh approval.</p><button class="primary" type="submit">Review external search &#8594;</button></form>
+          <div id="research-list" class="record-list"></div>
+        </section>
+
+        <section id="page-settings" class="page" hidden>
+          <div class="page-heading"><div><p class="eyebrow">CLEAR BOUNDARIES, BY DESIGN</p><h1>Your assistant. Your rules.</h1><p class="muted">Local inference is mandatory. External search is optional and always reviewed.</p></div></div>
+
+          <form id="model-settings-form" class="panel">
+            <h2>Local AI model</h2>
+            <p class="muted small">Start Ollama, then download a local model. Lumen uses only 127.0.0.1:11434 and rejects hosted models.</p>
+            <label for="model-select">Installed Ollama model</label><div class="inline-controls"><select id="model-select" required><option value="">Refresh to choose a model</option></select><button id="refresh-models" class="secondary" type="button">Refresh models</button></div>
+            <button class="primary" type="submit">Save local AI model</button>
+          </form>
+
+          <form id="embedding-settings-form" class="panel">
+            <h2>Optional document search</h2>
+            <label for="embedding-model">Local embedding model</label><input id="embedding-model" maxlength="150" placeholder="nomic-embed-text (install in Ollama first)"><p class="small muted">Enter nomic-embed-text to enable semantic search over authorized documents and notes. Leave blank for keyword search. Text stays local; embeddings are recomputed in memory for each question.</p>
+            <button class="primary" type="submit">Save document search setting</button>
+          </form>
+
+          <form id="research-settings-form" class="panel">
+            <h2>Optional web research</h2>
+            <label for="brave-key">Brave Search API key</label><input id="brave-key" type="password" maxlength="500" autocomplete="off" placeholder="Leave blank to keep the saved key"><p id="brave-status" class="small muted"></p>
+            <label class="check-label"><input id="remove-brave-key" type="checkbox"> Remove the saved Brave API key</label>
+            <button class="primary" type="submit">Save web research setting</button>
+          </form>
+
+          <form id="mail-settings-form" class="panel">
+            <h2>Optional mail import (read-only)</h2>
+            <p class="muted small">Reads your Gmail inbox over read-only IMAP using an app password; Lumen can never send mail from this account. Use an app-specific password, not your regular account password. <a href="https://support.google.com/accounts/answer/185833" target="_blank" rel="noopener noreferrer">Create a Gmail app password</a> (opens in your browser).</p>
+            <label for="mail-username">Gmail address</label><input id="mail-username" type="email" maxlength="320" placeholder="you@gmail.com">
+            <label for="mail-app-password">App password</label><input id="mail-app-password" type="password" maxlength="500" autocomplete="off" placeholder="Leave blank to keep the saved password">
+            <p id="mail-account-status" class="small muted"></p>
+            <label class="check-label"><input id="disconnect-mail-account" type="checkbox"> Disconnect this mail account</label>
+            <button class="primary" type="submit">Save mail import setting</button>
+          </form>
+
+          <section class="panel privacy-panel"><h2>What Lumen does and doesn't do</h2>
+            <dl><dt>Encrypted at rest</dt><dd>Document text, notes, history, reminders, drafts, research, imported mail, and your API keys use an encrypted vault. There is no passphrase recovery.</dd><dt>Explicit memory</dt><dd>Only documents, notes, and imported mail with AI access enabled enter retrieval. Preferences are saved only when you create and authorize them.</dd><dt>No silent actions</dt><dd>Search queries and deletions require single-use approvals. Lumen cannot send emails, read calendars, or connect messaging accounts. Mail import is read-only and only happens when you click Check for new mail.</dd><dt>Device-bound availability</dt><dd>The computer must be on. The vault auto-locks after 30 minutes without an action. Keep FileVault enabled.</dd><dt>Honest limits</dt><dd>Models can be wrong. Keyword and optional semantic retrieval can miss evidence, citations need verification, research compares snippets rather than full articles, and suggested reminders can miss or misread dates in your mail. This does not protect against malware running as you.</dd></dl>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="approval-dialog">
+    <div class="dialog-content"><p class="eyebrow">YOU HAVE THE FINAL SAY</p><h2 id="approval-title"></h2><p id="approval-warning" class="muted"></p><pre id="approval-payload"></pre><p class="small muted">This approval expires in ten minutes and can be used only once. Editing the query or item requires a new review.</p><div class="dialog-actions"><button id="approval-cancel" class="secondary">Cancel</button><button id="approval-confirm" class="primary">Approve</button></div></div>
+  </dialog>
+  <dialog id="detail-dialog"><div class="dialog-content"><div class="section-heading"><h2 id="detail-title"></h2><button id="detail-close" class="secondary">Close</button></div><div id="detail-body"></div></div></dialog>
+  <dialog id="inline-draft-dialog"><form id="inline-draft-form" class="dialog-content"><h2>Make it sound like you.</h2><p class="small muted">Edit and save your draft. Lumen cannot send email.</p><label for="inline-draft-to">To</label><input id="inline-draft-to" maxlength="320"><label for="inline-draft-subject">Subject</label><input id="inline-draft-subject" maxlength="500"><label for="inline-draft-body">Email body</label><textarea id="inline-draft-body" required maxlength="30000" rows="8"></textarea><div class="dialog-actions"><button id="inline-draft-cancel" type="button" class="secondary">Discard</button><button type="submit" class="primary">Save draft</button></div></form></dialog>
+</body>
+</html>
