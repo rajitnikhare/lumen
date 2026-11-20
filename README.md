@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo.png" alt="Lumen logo: a green rounded-square mark with a white serif &quot;L&quot;, next to the wordmark &quot;lumen.&quot;" width="320">
+</p>
+
 # Lumen
 
 A single-user, local-first personal AI assistant for a laptop or Mac mini. Lumen runs **FastAPI + Ollama** with a **Mac menu-bar app**, a chat-first interface, and an encrypted SQLite vault. It replaces the previous Maple application; there is **no email-sending capability**. Optional, off-by-default, read-only Gmail import is available; see [Mail import](#mail-import-read-only-optional).
